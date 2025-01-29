@@ -12,7 +12,8 @@ pub struct LineChartProps {
     labels: Option<Labels>,
     #[props(optional)]
     series_labels: Option<Labels>,
-
+    #[props(optional)]
+    colors: Option<Vec<String>>,
     #[props(default = "100%".to_string(), into)]
     width: String,
     #[props(default = "100%".to_string(), into)]
@@ -217,7 +218,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
         None
     };
 
-    let mut color_var = 255.0;
+    // let mut color_var = 255.0;
     let dotted_stroke = if props.show_dotted_grid {
         &"2px"
     } else {
@@ -244,8 +245,10 @@ pub fn LineChart(props: LineChartProps) -> Element {
             let mut dots = Vec::<Rect>::with_capacity(a.len());
             let mut text_point: Option<Point> = None;
 
-            color_var -= 75.0 * (1.0 / (i + 1) as f32);
-
+            let color = match props.colors.as_ref().map(|x| x.get(i)) {
+                Some(Some(v)) => v.to_owned(),
+                _ => String::from("rgb(142.5, 40, 40)"),
+            };
             for (index, v) in a.iter().enumerate() {
                 let point = grid.world_to_view(index as f32, *v, false);
 
@@ -272,7 +275,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
                     path {
                         d: "{commands}",
                         class: "{props.class_line_path}",
-                        stroke: "rgb({color_var}, 40, 40)",
+                        stroke: "{color}",
                         stroke_width: "{props.line_width}",
                         stroke_linecap: "round",
                         fill: "transparent",
@@ -284,7 +287,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
                             x2: "{d.max.x}",
                             y2: "{d.max.y}",
                             class: "{props.class_line_dot}",
-                            stroke: "rgb({color_var}, 40, 40)",
+                            stroke: "{color}",
                             stroke_width: "{props.dot_size}",
                             stroke_linecap: "round",
                         }
@@ -294,7 +297,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
                             dx: format_args!("{}", point.x + 10.0),
                             dy: "{point.y}",
                             text_anchor: "start",
-                            color: "rgb({color_var}, 40, 40)",
+                            color: "{color}",
                             class: "{props.class_line_label}",
                             "{label}"
                         }
