@@ -12,7 +12,8 @@ pub struct LineChartProps {
     labels: Option<Labels>,
     #[props(optional)]
     series_labels: Option<Labels>,
-
+    #[props(optional)]
+    colors: Option<Vec<String>>,
     #[props(default = "100%".to_string(), into)]
     width: String,
     #[props(default = "100%".to_string(), into)]
@@ -176,6 +177,14 @@ pub fn LineChart(props: LineChartProps) -> Element {
         (props.viewbox_height - props.padding_bottom) as f32,
     );
 
+    let get_color = |i: usize| {
+        let color: String = match props.colors.as_ref().map(|x: &Vec<String>| x.get(i)) {
+            Some(Some(v)) => v.to_owned(),
+            _ => String::from("rgb(142.5, 40, 40)"),
+        };
+        color
+    };
+
     let max_ticks = props.max_ticks.max(3);
 
     let axis_x = Axis::builder()
@@ -217,7 +226,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
         None
     };
 
-    let mut color_var = 255.0;
+    // let mut color_var = 255.0;
     let dotted_stroke = if props.show_dotted_grid {
         &"2px"
     } else {
@@ -243,8 +252,6 @@ pub fn LineChart(props: LineChartProps) -> Element {
             let mut commands = Vec::<String>::with_capacity(a.len());
             let mut dots = Vec::<Rect>::with_capacity(a.len());
             let mut text_point: Option<Point> = None;
-
-            color_var -= 75.0 * (1.0 / (i + 1) as f32);
 
             for (index, v) in a.iter().enumerate() {
                 let point = grid.world_to_view(index as f32, *v, false);
@@ -272,7 +279,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
                     path {
                         d: "{commands}",
                         class: "{props.class_line_path}",
-                        stroke: "rgb({color_var}, 40, 40)",
+                        stroke: "{get_color(i)}",
                         stroke_width: "{props.line_width}",
                         stroke_linecap: "round",
                         fill: "transparent",
@@ -284,7 +291,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
                             x2: "{d.max.x}",
                             y2: "{d.max.y}",
                             class: "{props.class_line_dot}",
-                            stroke: "rgb({color_var}, 40, 40)",
+                            stroke: "{get_color(i)}",
                             stroke_width: "{props.dot_size}",
                             stroke_linecap: "round",
                         }
@@ -294,7 +301,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
                             dx: format_args!("{}", point.x + 10.0),
                             dy: "{point.y}",
                             text_anchor: "start",
-                            color: "rgb({color_var}, 40, 40)",
+                            color: "{get_color(i)}",
                             class: "{props.class_line_label}",
                             "{label}"
                         }
@@ -329,7 +336,8 @@ pub fn LineChart(props: LineChartProps) -> Element {
                     }
                 }
 
-                for labels in grid_labels {
+                for (i, labels) in grid_labels.iter().enumerate() {
+
                     g {
                         class: "{props.class_grid_labels}",
                         for (text, label) in labels {
@@ -338,6 +346,7 @@ pub fn LineChart(props: LineChartProps) -> Element {
                                 dy: "{text.y}",
                                 text_anchor: "{text.anchor}",
                                 class: "{props.class_grid_label}",
+                                stroke: "{get_color(i)}",
                                 alignment_baseline: "{text.baseline}",
                                 "{label}"
                             }
