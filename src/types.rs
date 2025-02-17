@@ -1,10 +1,10 @@
 use std::fmt;
 
-pub(crate) type Series = Vec<Vec<f32>>;
-pub(crate) type Labels = Vec<String>;
+pub type Series = Vec<Vec<f32>>;
+pub type Labels = Vec<String>;
 
 #[derive(Clone, Copy, Default)]
-pub(crate) struct Point {
+pub struct Point {
     pub x: f32,
     pub y: f32,
 }
@@ -23,7 +23,7 @@ impl fmt::Display for Point {
 }
 
 #[derive(Clone, Copy, Default)]
-pub(crate) struct Rect {
+pub struct Rect {
     pub min: Point,
     pub max: Point,
 }
@@ -52,7 +52,7 @@ impl fmt::Display for Rect {
 }
 
 #[derive(Clone)]
-pub(crate) struct TextData {
+pub struct TextData {
     pub x: f32,
     pub y: f32,
     pub anchor: &'static str,
@@ -70,7 +70,7 @@ impl Default for TextData {
     }
 }
 
-pub(crate) struct MultiZip<T>(pub Vec<T>);
+pub struct MultiZip<T>(pub Vec<T>);
 
 //pub(crate) struct MultiZip<'a, T> {
 //    vec: &'a Vec<T>

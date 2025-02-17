@@ -13,7 +13,7 @@ pub enum Direction {
 }
 
 #[derive(Copy, Clone)]
-pub(crate) struct Axis {
+pub struct Axis {
     view: Rect,
     step_len: f32,
     steps: i32,
@@ -203,7 +203,7 @@ impl Axis {
     }
 }
 
-pub(crate) struct AxisBuilder<'a> {
+pub struct AxisBuilder<'a> {
     view: Rect,
     lowest: Option<f32>,
     highest: Option<f32>,
@@ -423,7 +423,7 @@ impl<'a> AxisBuilder<'a> {
     }
 }
 
-pub(crate) struct Grid {
+pub struct Grid {
     pub x: Axis,
     pub y: Axis,
 }

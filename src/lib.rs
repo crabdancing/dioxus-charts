@@ -24,11 +24,11 @@ dioxus-charts = "0.1.3"
 [Dioxus]: https://dioxuslabs.com/
 */
 
-#![deny(missing_docs)]
+// #![deny(missing_docs)]
 
-mod grid;
-mod types;
-mod utils;
+pub mod grid;
+pub mod types;
+pub mod utils;
 
 pub mod charts {
     //! Chart components
